@@ -6,5 +6,5 @@ cd github.com/sjatsh/unwxapkg
 unwxapkg -f dest/102.wxapkg
 ```
 
-### get result
+## Unpacking Result
 ![](http://static.1sapp.com/simage_template/23fa85f16911f689d7f35de36c9fd725bac75549.png)
