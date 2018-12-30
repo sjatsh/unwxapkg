@@ -1,4 +1,4 @@
-package unwxapkg
+package main
 
 import (
 	"errors"
