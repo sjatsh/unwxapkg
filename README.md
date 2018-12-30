@@ -2,7 +2,7 @@
 
 ```
 go get github.com/sjatsh/unwxapkg
-cd github.com/sjatsh/unwxapkg
+cd ~/go/src/github.com/sjatsh/unwxapkg
 unwxapkg -f dest/102.wxapkg
 ```
 
