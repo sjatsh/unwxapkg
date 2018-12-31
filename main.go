@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -43,7 +42,8 @@ func main() {
 	if _, err := file.Seek(0xE, 0); err != nil {
 		log.Fatal(err)
 	}
-	fileCount, err := readInt(file)
+	//file count in package
+	fileCount, err := ReadInt(file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,28 +51,7 @@ func main() {
 	wxApkgItems := make([]WxApkgItem, 0, fileCount)
 	for i := 0; i < fileCount; i++ {
 
-		nameLen, err := readInt(file)
-		if err != nil {
-			log.Fatal(err)
-		}
-		nameBuf := make([]byte, nameLen)
-		if _, err := file.Read(nameBuf); err != nil {
-			log.Fatal(err)
-		}
-		name := string(nameBuf[:])
-		start, err := readInt(file)
-		if err != nil {
-			log.Fatal(err)
-		}
-		length, err := readInt(file)
-		if err != nil {
-			log.Fatal(err)
-		}
-		item := WxApkgItem{
-			Name:   name,
-			Start:  start,
-			Length: length,
-		}
+		item := GetItem(file)
 		wxApkgItems = append(wxApkgItems, item)
 	}
 
@@ -84,6 +63,33 @@ func main() {
 
 		writeFile(file, item, path)
 	}
+}
+
+func GetItem(file *os.File) WxApkgItem {
+
+	nameLen, err := ReadInt(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	nameBuf := make([]byte, nameLen)
+	if _, err := file.Read(nameBuf); err != nil {
+		log.Fatal(err)
+	}
+	name := string(nameBuf[:])
+	start, err := ReadInt(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	length, err := ReadInt(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	item := WxApkgItem{
+		Name:   name,
+		Start:  start,
+		Length: length,
+	}
+	return item
 }
 
 func writeFile(file *os.File, item WxApkgItem, path string) {
@@ -106,22 +112,6 @@ func writeFile(file *os.File, item WxApkgItem, path string) {
 	if _, err := f.Write(buf); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func readInt(file *os.File) (int, error) {
-
-	ch := make([]byte, 4)
-	if n, err := file.Read(ch); err != nil {
-		return n, err
-	}
-	ch1 := int(ch[0])
-	ch2 := int(ch[1])
-	ch3 := int(ch[2])
-	ch4 := int(ch[3])
-	if ch1 < 0 || ch2 < 0 || ch3 < 0 || ch4 < 0 {
-		return 0, errors.New("io exception")
-	}
-	return ch1<<24 + ch2<<16 + ch3<<8 + ch4<<0, nil
 }
 
 type WxApkgItem struct {
