@@ -6,13 +6,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func main() {
 
-	f := flag.String("f", "", "小程序压缩包所在路径")
-	out := flag.String("o", ".", "解压后文件路径")
-
+	f := flag.String("f", "", "wechat wxapkg file path")
+	out := flag.String("o", ".", "output file path")
 	flag.Parse()
 
 	file, err := os.OpenFile(*f, os.O_RDONLY, 0644)
@@ -21,11 +21,11 @@ func main() {
 	}
 	defer file.Close()
 
-	*out = *out + "/" + file.Name() + "_unpackage"
-	_, err = os.Stat(*out)
+	unapkgDir := *out + "/" + strings.Split(file.Name(), ".")[0]
+	_, err = os.Stat(unapkgDir)
 	if err != nil {
 		if os.IsNotExist(err) {
-			if err := os.Mkdir(*out, os.ModePerm); err != nil {
+			if err := os.Mkdir(unapkgDir, os.ModePerm); err != nil {
 				log.Fatal(err)
 			}
 		}
@@ -59,9 +59,9 @@ func main() {
 
 		item := wxApkgItems[idx]
 		fmt.Println(item)
-		path := *out + item.Name
+		path := unapkgDir + item.Name
 
-		writeFile(file, item, path)
+		WriteFile(file, item, path)
 	}
 }
 
@@ -92,7 +92,7 @@ func GetItem(file *os.File) WxApkgItem {
 	return item
 }
 
-func writeFile(file *os.File, item WxApkgItem, path string) {
+func WriteFile(file *os.File, item WxApkgItem, path string) {
 
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
