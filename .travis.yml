@@ -7,9 +7,6 @@ os:
   - windows
 sudo: true
 script:
-  - unset GOPATH
-  - env GO111MODULE=on go build
-  - env GO111MODULE=on go test
   - go test -v ./...
 notifications:
   email:
