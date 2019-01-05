@@ -14,7 +14,8 @@ func TestUnwxapkg(t *testing.T) {
 
 func TestReadFileError(t *testing.T) {
 	err := Unwxapkg("dest/xx.wxapkg", ".")
-	if err != nil && !strings.Contains(err.Error(), "no such file or directory") {
+	if err != nil && !strings.Contains(err.Error(), "no such file or directory") &&
+		!strings.Contains(err.Error(), "The system cannot find the file") {
 		t.Fatal(err)
 	}
 }
