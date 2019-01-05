@@ -6,7 +6,9 @@ os:
   - osx
   - windows
 sudo: true
+install: true
 script:
+  - unset GOPATH
   - env GO111MODULE=on go build
   - env GO111MODULE=on go test
   - go test -v ./...
