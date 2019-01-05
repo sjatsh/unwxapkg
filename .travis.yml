@@ -1,14 +1,13 @@
-language: go
-go:
-  - 1.11.x
+language: c
 os:
   - linux
   - osx
   - windows
 sudo: true
-install: true
+dist: trusty
+install:
+  - eval "$(curl -sL https://raw.githubusercontent.com/travis-ci/gimme/master/gimme | GIMME_GO_VERSION=master bash)"
 script:
-  - unset GOPATH
   - env GO111MODULE=on go build
   - env GO111MODULE=on go test
   - go test -v ./...
