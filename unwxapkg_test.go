@@ -1,7 +1,7 @@
-package lib
+package main
 
 import "testing"
 
 func TestUnwxapkg(t *testing.T) {
-	Unwxapkg("../dest/102.wxapkg", "../dest")
+	Unwxapkg("dest/102.wxapkg", ".")
 }

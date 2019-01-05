@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"unwxapkg/lib"
 )
 
 func main() {
@@ -11,5 +10,5 @@ func main() {
 	out := flag.String("o", ".", "output file path")
 	flag.Parse()
 
-	lib.Unwxapkg(*f, *out)
+	Unwxapkg(*f, *out)
 }
