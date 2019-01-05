@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/sjatsh/unwxapkg.svg?branch=master)](https://travis-ci.org/sjatsh/unwxapkg)
+[![Coverage Status](https://coveralls.io/repos/github/sjatsh/unwxapkg/badge.svg?branch=master)](https://coveralls.io/github/sjatsh/unwxapkg?branch=master)
 
 ## Usage
 
