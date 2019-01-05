@@ -6,8 +6,12 @@ os:
   - osx
   - windows
 sudo: true
+before_install:
+  - go get -t -v ./...
 script:
-  - go test -v ./...
+  - go test -race -coverprofile = coverage.txt -covermode = atomic
+after_success:
+  - bash <（curl -s https://codecov.io/bash）
 notifications:
   email:
     recipients:
