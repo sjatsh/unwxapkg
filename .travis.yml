@@ -6,15 +6,10 @@ os:
   - osx
   - windows
 sudo: true
-install:
-  - go get -t ./...
-  - go get code.google.com/p/go.tools/cmd/cover
-  - go get github.com/mattn/goveralls
 before_install:
   - go get -t -v ./...
 script:
-  - PATH="$HOME/gopath/bin:$PATH"
-  - script/coverage --coveralls
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
 notifications:
   email:
     recipients:
