@@ -2,13 +2,17 @@ package main
 
 import (
 	"flag"
+	"log"
 )
+
+var f = flag.String("f", "", "wechat wxapkg file path")
+var out = flag.String("o", ".", "output file path")
 
 func main() {
 
-	f := flag.String("f", "", "wechat wxapkg file path")
-	out := flag.String("o", ".", "output file path")
 	flag.Parse()
 
-	Unwxapkg(*f, *out)
+	if err := Unwxapkg(*f, *out); err != nil {
+		log.Fatal(err)
+	}
 }
