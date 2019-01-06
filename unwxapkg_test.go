@@ -21,7 +21,7 @@ func TestReadFileError(t *testing.T) {
 }
 
 func TestErrBom(t *testing.T) {
-	f, err := os.Create("dest/test.wxapkg")
+	f, err := os.Create("dest/test1.wxapkg")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +29,45 @@ func TestErrBom(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = Unwxapkg("dest/test.wxapkg", ".")
+	err = Unwxapkg("dest/test1.wxapkg", ".")
+	if err != nil && !strings.Contains(err.Error(), "EOF") {
+		t.Fatal(err)
+	}
+}
+
+func TestFileTypeError(t *testing.T) {
+
+	f, err := os.Create("dest/test2.wxapkg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.Write([]byte{0XBF}); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	err = Unwxapkg("dest/test2.wxapkg", ".")
+	if err != nil && !strings.Contains(err.Error(), "file type error") {
+		t.Fatal(err)
+	}
+}
+
+func TestSeekError(t *testing.T) {
+
+	f, err := os.Create("dest/test3.wxapkg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.Write([]byte{0XBE}); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	err = Unwxapkg("dest/test3.wxapkg", ".")
 	if err != nil && !strings.Contains(err.Error(), "EOF") {
 		t.Fatal(err)
 	}
