@@ -12,6 +12,10 @@ func TestUnwxapkg(t *testing.T) {
 	}
 }
 
+func TestMkdirError(t *testing.T) {
+	Unwxapkg("dest/102.wxapkg", "./|$")
+}
+
 func TestReadFileError(t *testing.T) {
 	err := Unwxapkg("dest/xx.wxapkg", ".")
 	if err != nil && !strings.Contains(err.Error(), "no such file or directory") &&
