@@ -5,18 +5,30 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-func Unwxapkg(inPath, outPath string) error {
+type UnWxapkg struct {
+	InPath  string
+	OutPath string
+	inFile  *os.File
+}
 
-	file, err := os.OpenFile(inPath, os.O_RDONLY, 0644)
+func (extract *UnWxapkg) Unwxapkg() error {
+
+	file, err := os.OpenFile(extract.InPath, os.O_RDONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	fileName := filepath.Base(file.Name())
-	unapkgDir := outPath + "/" + fileName
+	extract.inFile = file
+
+	fullName := filepath.Base(file.Name())
+	ext := filepath.Ext(file.Name())
+	fileName := strings.TrimSuffix(fullName, ext)
+
+	unapkgDir := extract.OutPath + "/" + fileName
 	if _, err := os.Stat(unapkgDir); err != nil {
 		if os.IsNotExist(err) {
 			if err := os.MkdirAll(unapkgDir, os.ModePerm); err != nil {
@@ -24,6 +36,7 @@ func Unwxapkg(inPath, outPath string) error {
 			}
 		}
 	}
+	extract.OutPath = unapkgDir
 
 	bom := make([]byte, 1)
 	if _, err := file.Read(bom); err != nil {
@@ -42,7 +55,7 @@ func Unwxapkg(inPath, outPath string) error {
 		return err
 	}
 
-	wxApkgItems := make([]*WxApkgItem, 0, fileCount)
+	wxApkgItems := make([]WxApkgItem, 0, fileCount)
 	for i := 0; i < fileCount; i++ {
 		item, err := GetItem(file)
 		if err != nil {
@@ -54,34 +67,33 @@ func Unwxapkg(inPath, outPath string) error {
 	for idx := range wxApkgItems {
 		item := wxApkgItems[idx]
 		fmt.Println(item)
-		path := unapkgDir + item.Name
-		if err := WriteFile(file, item, path); err != nil {
+		if err := extract.WriteFile(item); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func GetItem(file *os.File) (*WxApkgItem, error) {
+func GetItem(file *os.File) (WxApkgItem, error) {
 
 	nameLen, err := ReadInt(file)
 	if err != nil {
-		return nil, err
+		return WxApkgItem{}, err
 	}
 	nameBuf := make([]byte, nameLen)
 	if _, err := file.Read(nameBuf); err != nil {
-		return nil, err
+		return WxApkgItem{}, err
 	}
 	name := string(nameBuf[:])
 	start, err := ReadInt(file)
 	if err != nil {
-		return nil, err
+		return WxApkgItem{}, err
 	}
 	length, err := ReadInt(file)
 	if err != nil {
-		return nil, err
+		return WxApkgItem{}, err
 	}
-	item := &WxApkgItem{
+	item := WxApkgItem{
 		Name:   name,
 		Start:  start,
 		Length: length,
@@ -89,14 +101,14 @@ func GetItem(file *os.File) (*WxApkgItem, error) {
 	return item, nil
 }
 
-func WriteFile(file *os.File, item *WxApkgItem, path string) error {
+func (extract *UnWxapkg) WriteFile(item WxApkgItem) error {
 
-	dir := filepath.Dir(path)
+	dir := filepath.Dir(extract.OutPath + item.Name)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 		return err
 	}
 
-	f, err := os.Create(path)
+	f, err := os.Create(extract.OutPath + item.Name)
 	if err != nil {
 		return err
 	}
@@ -106,7 +118,7 @@ func WriteFile(file *os.File, item *WxApkgItem, path string) error {
 	}()
 
 	buf := make([]byte, item.Length)
-	if _, err := file.Read(buf); err != nil {
+	if _, err := extract.inFile.Read(buf); err != nil {
 		return err
 	}
 	if _, err := f.Write(buf); err != nil {

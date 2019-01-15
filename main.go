@@ -12,7 +12,10 @@ func main() {
 
 	flag.Parse()
 
-	if err := Unwxapkg(*f, *out); err != nil {
+	extract := new(UnWxapkg)
+	extract.InPath = *f
+	extract.OutPath = *out
+	if err := extract.Unwxapkg(); err != nil {
 		log.Fatal(err)
 	}
 }
