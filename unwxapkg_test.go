@@ -7,17 +7,26 @@ import (
 )
 
 func TestUnwxapkg(t *testing.T) {
-	if err := Unwxapkg("dest/102.wxapkg", "."); err != nil {
+	extract := new(UnWxapkg)
+	extract.InPath = "dest/102.wxapk"
+	extract.OutPath = "."
+	if err := extract.Unwxapkg(); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestMkdirError(t *testing.T) {
-	Unwxapkg("dest/102.wxapkg", "./|$")
+	extract := new(UnWxapkg)
+	extract.InPath = "dest/102.wxapk"
+	extract.OutPath = "./|$"
+	extract.Unwxapkg()
 }
 
 func TestReadFileError(t *testing.T) {
-	err := Unwxapkg("dest/xx.wxapkg", ".")
+	extract := new(UnWxapkg)
+	extract.InPath = "dest/1.wxapk"
+	extract.OutPath = "."
+	err := extract.Unwxapkg()
 	if err != nil && !strings.Contains(err.Error(), "no such file or directory") &&
 		!strings.Contains(err.Error(), "The system cannot find the file") {
 		t.Fatal(err)
@@ -32,8 +41,10 @@ func TestErrBom(t *testing.T) {
 	if err := f.Close(); err != nil {
 		t.Fatal(err)
 	}
-
-	err = Unwxapkg("dest/test1.wxapkg", ".")
+	extract := new(UnWxapkg)
+	extract.InPath = "dest/test1.wxapk"
+	extract.OutPath = "."
+	err = extract.Unwxapkg()
 	if err != nil && !strings.Contains(err.Error(), "EOF") {
 		t.Fatal(err)
 	}
@@ -52,7 +63,10 @@ func TestFileTypeError(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = Unwxapkg("dest/test2.wxapkg", ".")
+	extract := new(UnWxapkg)
+	extract.InPath = "dest/test2.wxapk"
+	extract.OutPath = "."
+	err = extract.Unwxapkg()
 	if err != nil && !strings.Contains(err.Error(), "file type error") {
 		t.Fatal(err)
 	}
@@ -70,8 +84,10 @@ func TestSeekError(t *testing.T) {
 	if err := f.Close(); err != nil {
 		t.Fatal(err)
 	}
-
-	err = Unwxapkg("dest/test3.wxapkg", ".")
+	extract := new(UnWxapkg)
+	extract.InPath = "dest/test3.wxapk"
+	extract.OutPath = "."
+	err = extract.Unwxapkg()
 	if err != nil && !strings.Contains(err.Error(), "EOF") {
 		t.Fatal(err)
 	}
