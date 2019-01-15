@@ -5,25 +5,21 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
-func Unwxapkg(f, out string) error {
+func Unwxapkg(inPath, outPath string) error {
 
-	file, err := os.OpenFile(f, os.O_RDONLY, 0644)
+	file, err := os.OpenFile(inPath, os.O_RDONLY, 0644)
 	if err != nil {
 		return err
 	}
-	defer func() {
-		file.Sync()
-		file.Close()
-	}()
+	defer file.Close()
 
-	unapkgDir := out + "/" + strings.Split(file.Name(), ".")[0]
-	_, err = os.Stat(unapkgDir)
-	if err != nil {
+	fileName := filepath.Base(file.Name())
+	unapkgDir := outPath + "/" + fileName
+	if _, err := os.Stat(unapkgDir); err != nil {
 		if os.IsNotExist(err) {
-			if err := os.Mkdir(unapkgDir, os.ModePerm); err != nil {
+			if err := os.MkdirAll(unapkgDir, os.ModePerm); err != nil {
 				return err
 			}
 		}
@@ -104,7 +100,10 @@ func WriteFile(file *os.File, item *WxApkgItem, path string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		f.Sync()
+		f.Close()
+	}()
 
 	buf := make([]byte, item.Length)
 	if _, err := file.Read(buf); err != nil {
