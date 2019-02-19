@@ -26,6 +26,3 @@ unwxapkg -f dest/102.wxapkg
 
 ## Unpacking Result
 ![](http://static.1sapp.com/simage_template/23fa85f16911f689d7f35de36c9fd725bac75549.png)
-
-## Can be use by
-微信小游戏破解-消灭病毒 [https://github.com/sjatsh/eliminate-virus](https://github.com/sjatsh/eliminate-virus)
