@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import (
 	"os"
@@ -56,7 +56,7 @@ func TestFileTypeError(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := f.Write([]byte{0XBF}); err != nil {
+	if _, err := f.Write([]byte{0xBF}); err != nil {
 		t.Fatal(err)
 	}
 	if err := f.Close(); err != nil {
@@ -78,7 +78,7 @@ func TestSeekError(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := f.Write([]byte{0XBE}); err != nil {
+	if _, err := f.Write([]byte{0xBE}); err != nil {
 		t.Fatal(err)
 	}
 	if err := f.Close(); err != nil {
